@@ -1,22 +1,18 @@
-const app = require('express')();
-const http = require('http');
-const server = http.createServer(app);
-const io = require('socket.io')(server);
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
-});
-io.on('connection', function (socket) {
-    socket.on('chat message', function (msg) {
-        io.emit('chat message', msg);
+import * as http from "http";
+import httpProxy from "http-proxy";
+import { WebSocket } from "ws";
+const server = http.createServer();
+const proxy = httpProxy.createProxyServer({ ws: true });
+server.on("upgrade", function (req, socket) {
+    console.log(req.url);
+    proxy.ws(req, socket, {
+        target: "ws://06e82e09c27487.vm.aionary-gamews.internal",
     });
 });
-app.set('port', (process.env.PORT || 3000));
-console.log('The port is:::: ', app.get('port'));
-server.listen(app.get('port'), () => {
-    console.log('---> listening on port ', app.get('port'));
-});
-io.on('connection', (socket) => {
-    console.log('Client connected');
-    socket.on('disconnect', () => console.log('Client disconnected'));
-});
+const ws = new WebSocket("ws://06e82e09c27487.vm.aionary-gamews.internal");
+ws.onopen = () => {
+    console.log("connected");
+};
+console.log("Running Proxy");
+server.listen(8080);
 //# sourceMappingURL=index.js.map
