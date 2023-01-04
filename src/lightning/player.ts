@@ -1,5 +1,5 @@
 import express from "express";
-import prisma from "../prisma";
+import prisma from "../prisma.js";
 
 const router = express.Router();
 
@@ -11,11 +11,11 @@ router.get("/:name", async (req, res) => {
   if (user) {
     res.send({
       error: false,
-      player: { name: user.name, points: user.points, id: user.id },
+      player: { name: user.name, points: user.points.toString(), id: user.id },
     });
   } else {
     res.send({ error: true, msg: "Player doesn't exist!" });
   }
 });
 
-module.exports = router;
+export default router;

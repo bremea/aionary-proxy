@@ -4,7 +4,10 @@ import httpProxy from "http-proxy";
 import redis from "./redis.js";
 import centra from "centra";
 import cors from "cors";
-import prisma from "./prisma.js";
+import accountRouter from "./lightning/account.js";
+import playerRouter from "./lightning/player.js";
+import meRouter from "./lightning/me.js";
+import lbRouter from "./lightning/lb.js";
 
 const proxy = httpProxy.createProxyServer({
   ws: true,
@@ -16,7 +19,7 @@ app.use(
     origin: "*",
   })
 );
-app.use (express.json());
+app.use(express.json());
 
 const server = http.createServer(app);
 
@@ -179,9 +182,14 @@ app.get("/pub", async (req, res) => {
     await flyreq.send();
     res.send(ns);
   } else {
-	res.send(valSort[0]);
+    res.send(valSort[0]);
   }
 });
+
+app.use("/lightning/account", accountRouter);
+app.use("/lightning/player", playerRouter);
+app.use("/lightning/me", meRouter);
+app.use("/lightning/lb", lbRouter);
 
 console.log("Running Proxy");
 server.listen(8080);
